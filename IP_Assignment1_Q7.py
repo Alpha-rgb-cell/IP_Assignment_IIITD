@@ -13,3 +13,6 @@ allowance = 20000
 sf = 0.1
 r = 0.5
 months, remaining_savings = save_for_laptop(cost, allowance, sf, r)
+
+print(f"You will be able to purchase the laptop in {months} months")
+print(f"The remaining savings will be {remaining_savings}")
