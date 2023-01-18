@@ -1,0 +1,44 @@
+import csv
+
+# Hard-coded list of assessment weights
+wts = [(10, 5), (20, 5), (100, 15), (40, 10), (30,20)]
+
+# Read IPmarks.txt and compute weighted sum of marks for each student
+with open('IPmarks.txt', 'r') as marks_file:
+    marks_reader = csv.reader(marks_file, delimiter=',')
+    with open('IPgrades.txt', 'w') as grades_file:
+        grades_writer = csv.writer(grades_file, delimiter=',')
+
+        # Write header row
+        grades_writer.writerow(['Roll_no', 'total_marks', 'grade'])
+
+        for row in marks_reader:
+            roll_no = row[0]
+            marks = [int(mark) for mark in row[1:]]
+            
+            # Compute weighted sum of marks normalized to 100
+            weighted_sum = 0
+            for i, (max_mark, weight) in enumerate(wts):
+                normalized_mark = (marks[i] / max_mark) * weight
+                weighted_sum += normalized_mark
+            
+            # Determine grade based on weighted sum
+            if weighted_sum >= 80:
+                grade = 'A'
+            elif weighted_sum >= 70:
+                grade = 'A-'
+            elif weighted_sum >= 60:
+                grade = 'B'
+            elif weighted_sum >= 50:
+                grade = 'B-'
+            elif weighted_sum >= 40:
+                grade = 'C'
+            elif weighted_sum >= 35:
+                grade = 'C-'
+            elif weighted_sum >= 30:
+                grade = 'D'
+            else:
+                grade = 'F'
+            
+            # Write student's roll number, weighted sum, and grade to IPgrades.txt
+            grades_writer.writerow([roll_no, weighted_sum, grade])
