@@ -1,0 +1,58 @@
+def read_marks(file_name):
+    marks = {}
+    with open(file_name, 'r') as f:
+        for line in f:
+            roll_no, *marks_list = line.strip().split(",")
+            marks[roll_no] = list(map(int, marks_list))
+    return marks
+
+def compute_weighted_marks(marks, wts):
+    weighted_marks = {}
+    for roll_no in marks:
+        weighted_sum = 0
+        for i, mark in enumerate(marks[roll_no]):
+            weighted_sum += (mark / wts[i][0]) * wts[i][1]
+        weighted_marks[roll_no] = round(weighted_sum, 2)
+    return weighted_marks
+
+def assign_grades(weighted_marks):
+    grades = {}
+    for roll_no in weighted_marks:
+        total_marks = weighted_marks[roll_no]
+        if total_marks >= 80:
+            grades[roll_no] = "A"
+        elif total_marks >= 70:
+            grades[roll_no] = "A-"
+        elif total_marks >= 60:
+            grades[roll_no] = "B"
+        elif total_marks >= 50:
+            grades[roll_no] = "B-"
+        elif total_marks >= 40:
+            grades[roll_no] = "C"
+        elif total_marks >= 35:
+            grades[roll_no] = "C-"
+        elif total_marks >= 30:
+            grades[roll_no] = "D"
+        else:
+            grades[roll_no] = "F"
+    return grades
+
+def write_grades(grades, file_name):
+    with open(file_name, 'w') as f:
+        for roll_no in grades:
+            f.write(f"{roll_no}, {weighted_marks[roll_no]}, {grades[roll_no]}\n")
+
+marks = read_marks("IPmarks.txt")
+wts = [(10, 5), (20, 5), (100, 15), (40, 10)]
+weighted_marks = compute_weighted_marks(marks, wts)
+grades = assign_grades(weighted_marks)
+write_grades(grades, "IPgrades.txt")
+
+import os
+if os.path.exists('IPmarks.txt'):
+    marks = read_marks("IPmarks.txt")
+else:
+    print("IPmarks.txt not found in the current directory")
+
+marks = read_marks("C:\\Users\\athiy\\IPmarks.txt.txt")
+
