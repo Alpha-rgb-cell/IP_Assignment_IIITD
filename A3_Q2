@@ -1,0 +1,95 @@
+def process_data(sorted_data.txt):
+    data = {}
+    with open(sorted_data.txt, "r") as f:
+        for line in f:
+            name, crossing, gate, time = line.strip().split(",")
+            if name not in data:
+                data[name] = []
+            data[name].append((gate, crossing, time))
+
+    for name in data:
+        data[name].sort(key=lambda x: x[2])
+
+    # remove duplicates
+    for name in data:
+        i = 0
+        while i < len(data[name]) - 1:
+            if data[name][i][1] == "ENTER" and data[name][i+1][1] == "ENTER":
+                data[name].pop(i+1)
+            elif data[name][i][1] == "EXIT" and data[name][i+1][1] == "EXIT":
+                data[name].pop(i)
+            else:
+                i += 1
+
+    return data
+
+def is_present(data, name, time):
+    n = len(data[name])
+    for i in range(n):
+        if data[name][i][1] == "ENTER":
+            for j in range(i+1, n):
+                if data[name][j][1] == "EXIT":
+                    if data[name][i][2] <= time <= data[name][j][2]:
+                        return True
+                    else:
+                        break
+    return False
+
+def write_student_data(data, name, time, out_file):
+    with open(out_file, "w") as f:
+        f.write("Student: {}\n".format(name))
+        f.write("Data: {}\n".format(data[name]))
+        f.write("Currently present: {}\n".format(is_present(data, name, time)))
+
+def write_time_range_data(data, start_time, end_time, out_file):
+    with open(out_file, "w") as f:
+        for name in data:
+            for gate, crossing, time in data[name]:
+                if start_time <= time <= end_time:
+                    f.write("{},{},{},{}\n".format(name, crossing, gate, time))
+
+def write_gate_data(data, gate, out_file):
+    with open(out_file, "w") as f:
+        enter_count = 0
+        exit_count = 0
+        for name in data:
+            for g, crossing, time in data[name]:
+                if g == gate:
+                    if crossing == "ENTER":
+                        enter_count += 1
+                    else:
+                        exit_count += 1
+        f.write("Gate: {}\n".format(gate))
+        f.write("Enter count: {}\n".format(enter_count))
+        f.write("Exit count: {}\n".format(exit_count))
+
+def main():
+    data_file = "data.txt" # input file
+    data = process_data(data_file)
+
+    while True:
+        print("1. Write student data")
+        print("2. Write time range data")
+        print("3. Write gate data")
+        print("4. Exit")
+        choice = int(input("Enter your choice: "))
+        if choice == 1:
+            name = input("Enter student name: ")
+            time = input("Enter time: ")
+            out_file = "student_data.txt"
+            write_student_data(data, name, time, out_file)
+        elif choice == 2:
+            start_time = input("Enter start time: ")
+            end_time = input("Enter end time: ")
+            out_file = "time_range_data.txt"
+            write_time_range_data(data, start_time, end_time, out_file)
+        elif choice == 3:
+            gate = input("Enter gate: ")
+            out_file = "gate_data.txt"
+            write_gate_data(data, gate, out_file)
+        elif choice == 4:
+            break
+        else:
+            print("Invalid choice")
+
+       
